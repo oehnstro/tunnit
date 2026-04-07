@@ -1,0 +1,22 @@
+{
+  "name": "tunnit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "fetch": "tsx src/fetch.ts",
+    "generate": "tsx src/generate.ts",
+    "build": "tsx src/fetch.ts && tsx src/generate.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.2"
+  }
+}

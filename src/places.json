@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Uimahalli",
+    "placeId": "ChIJpWPCSJuNjUYRu0NQUidFk0E",
+    "category": "swimming"
+  },
+  {
+    "name": "Kirjasto",
+    "placeId": "ChIJAciymo-NjUYRiaM7ufLq2B4",
+    "category": "library"
+  },
+  {
+    "name": "Cittari",
+    "placeId": "ChIJUcwSEJGNjUYRxF2vaYOboIU",
+    "category": "shop"
+  }
+]
