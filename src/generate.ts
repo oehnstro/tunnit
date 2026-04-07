@@ -28,6 +28,8 @@ const CATEGORY_ICONS: Record<string, string> = {
 };
 
 function hasSpecialHoursToday(place: PlaceData): boolean {
+  // Uses UTC date — could show the wrong day between midnight and ~03:00 Helsinki time.
+  // Acceptable since the daily build also runs at 04:00 UTC (07:00 Helsinki).
   const today = new Date().toISOString().slice(0, 10);
   return place.specialDays.some((d) => d.date === today);
 }
