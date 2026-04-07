@@ -29,7 +29,7 @@ const CATEGORY_ICONS: Record<string, string> = {
 
 function hasSpecialHoursToday(place: PlaceData): boolean {
   const today = new Date().toISOString().slice(0, 10);
-  return place.specialDays.some((d) => d.date === today && d.isExceptional);
+  return place.specialDays.some((d) => d.date === today);
 }
 
 function renderPlace(place: PlaceData, index: number): string {
@@ -87,7 +87,7 @@ function generateHtml(places: PlaceData[]): string {
     ${cards}
   </main>
   <footer>
-    <p>Updated ${fetchedAt} &middot; Source: Google Maps</p>
+    <p>P&auml;ivitetty ${fetchedAt} &middot; Lähde: Google Maps</p>
   </footer>
   <script>
     (function() {
