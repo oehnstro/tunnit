@@ -57,6 +57,16 @@ npm run build      # both steps
 
 Open `dist/index.html` in a browser to preview.
 
+## Uimahallin radat
+
+`uimahalli.html` shows which swimming hall lanes are free today and on the next two days. The Uimahalli card links to it.
+
+- Bookings come from the swimming hall's public Timmi booking calendar (asp3.timmi.fi), through its read-only guest login. No API key is needed.
+- `npm run fetch:lanes` fetches two weeks of bookings to `dist/lanes.json`. `npm run build` runs it between the Google fetch and the page generation.
+- Opening hours, including holiday exceptions, come from the Uimahalli entry in the Google data. Swimming ends 30 minutes before the hall closes.
+- If the Timmi fetch fails, the build still succeeds. That day's site just has no lanes page and no link to it.
+- The Timmi calls are an undocumented internal API, so a Timmi update can break them. `src/timmi.ts` has the room-part IDs and the call sequence.
+
 ## Production (GitHub Pages)
 
 The repo includes a workflow at `.github/workflows/build-and-deploy.yml` that builds the site daily and deploys it to GitHub Pages.
