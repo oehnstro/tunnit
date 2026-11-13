@@ -106,6 +106,7 @@ function pageShell(opts: {
   body: string;
   footer: string;
   scripts: string;
+  bodyClass?: string;
 }): string {
   return `<!DOCTYPE html>
 <html lang="fi">
@@ -118,7 +119,7 @@ function pageShell(opts: {
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body${opts.bodyClass ? ` class="${opts.bodyClass}"` : ""}>
   <header>
     <div class="header-inner">
       <h1>${opts.heading}</h1>
@@ -227,6 +228,7 @@ function generateLanesHtml(lanes: LanesData, pool: PlaceData | undefined): strin
     title: "Uimahallin radat &mdash; Kirkkonummi",
     heading: `<a href="index.html">Kirkkonummi</a>`,
     subtitle: "uimahallin radat",
+    bodyClass: "lanes-page",
     body: `<main class="lanes">
     <div class="lanes-head">
       <h2>Vapaat radat</h2>

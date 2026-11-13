@@ -131,8 +131,8 @@
     var grid = [0, 3, 6].map(function (c) {
       return '<line x1="0" x2="1000" y1="' + Y(c) + '" y2="' + Y(c) + '" vector-effect="non-scaling-stroke"/>';
     }).join("");
-    var chart = '<div class="lanes-row"><div class="lanes-chart-lbl"><span class="lanes-lbl">Vapaat</span>' +
-      '<div class="lanes-ylab"><span>6</span><span>3</span><span>0</span></div></div>' +
+    var chart = '<div class="lanes-row"><div></div><div class="lanes-caption">Vapaita ratoja isossa altaassa</div></div>' +
+      '<div class="lanes-row"><div class="lanes-ylab"><span>6</span><span>3</span><span>0</span></div>' +
       '<div class="lanes-chart"><svg viewBox="0 0 1000 100" preserveAspectRatio="none" role="img" aria-label="Vapaiden ratojen määrä isossa altaassa">' +
       '<g class="lanes-grid">' + grid + "</g>" +
       '<rect class="lanes-chart-shut" x="' + X(end) + '" y="0" width="' + (1000 - X(end)) + '" height="100"/>' +
