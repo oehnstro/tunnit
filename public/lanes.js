@@ -26,7 +26,6 @@
     therapy: ["therapy"],
   };
   var AREA = { all: "Koko allas", shallow: "Matala pää", deep: "Syvä pää" };
-  var LANES = ["L1", "L2", "L3", "L4", "L5", "L6"];
   var ROWS = [
     ["L1", "Rata 1"], ["L2", "Rata 2"], ["L3", "Rata 3"], ["L4", "Rata 4"], ["L5", "Rata 5"], ["L6", "Rata 6"],
     ["teach", "Opetus"], ["therapy", "Terapia"],
@@ -64,9 +63,6 @@
   }
   function bookingsFor(u, d) {
     return BOOKINGS.filter(function (b) { return b.d === d && AFFECTS[u].indexOf(b.k) !== -1; });
-  }
-  function isFree(u, d, m) {
-    return !bookingsFor(u, d).some(function (b) { return b.s <= m && b.e > m; });
   }
 
   var lastDate = BOOKINGS.reduce(function (x, b) { return b.d > x ? b.d : x; }, "");
@@ -119,26 +115,9 @@
     var showNow = isToday && n.m >= AX0 && n.m <= AX1;
     var nowLine = showNow ? '<div class="lanes-now" style="left:' + pct(n.m) + '%"></div>' : "";
 
-    // Free lanes in Iso allas, 5-minute steps, drawn as a stepped area.
-    function X(m) { return (Math.max(AX0, m) - AX0) / (AX1 - AX0) * 1000; }
-    function Y(c) { return 100 - c / 6 * 94; }
-    var path = "M" + X(from) + ",100";
-    for (var m = from; m < end; m += 5) {
-      var c = LANES.filter(function (u) { return isFree(u, d, m); }).length;
-      path += " L" + X(m) + "," + Y(c) + " L" + X(Math.min(m + 5, end)) + "," + Y(c);
-    }
-    path += " L" + X(end) + ",100 Z";
-    var grid = [0, 3, 6].map(function (c) {
-      return '<line x1="0" x2="1000" y1="' + Y(c) + '" y2="' + Y(c) + '" vector-effect="non-scaling-stroke"/>';
-    }).join("");
-    var chart = '<div class="lanes-row"><div></div><div class="lanes-caption">Vapaita ratoja isossa altaassa</div></div>' +
-      '<div class="lanes-row"><div class="lanes-ylab"><span>6</span><span>3</span><span>0</span></div>' +
-      '<div class="lanes-chart"><svg viewBox="0 0 1000 100" preserveAspectRatio="none" role="img" aria-label="Vapaiden ratojen määrä isossa altaassa">' +
-      '<g class="lanes-grid">' + grid + "</g>" +
-      '<rect class="lanes-chart-shut" x="' + X(end) + '" y="0" width="' + (1000 - X(end)) + '" height="100"/>' +
-      '<path class="lanes-area" d="' + path + '" vector-effect="non-scaling-stroke"/></svg>' +
-      nowLine + (showNow ? '<span class="lanes-now-tag" style="left:' + pct(n.m) + '%">Nyt</span>' : "") +
-      "</div></div>";
+    // Always present so the lanes don't shift when switching days.
+    var nowRow = '<div class="lanes-row"><div></div><div class="lanes-nowrow">' +
+      (showNow ? '<span class="lanes-now-tag" style="left:' + pct(n.m) + '%">Nyt</span>' : "") + "</div></div>";
 
     var maint = false;
     var rows = ROWS.map(function (r) {
@@ -159,7 +138,7 @@
     for (var hr = Math.ceil(AX0 / 60); hr <= Math.floor(AX1 / 60); hr++) {
       ticks.push('<span class="' + (hr % 2 ? "odd" : "") + '" style="left:' + pct(hr * 60) + '%">' + hr + "</span>");
     }
-    elStrip.innerHTML = chart + rows + '<div class="lanes-row"><div></div><div class="lanes-axis">' + ticks.join("") + "</div></div>";
+    elStrip.innerHTML = nowRow + rows + '<div class="lanes-row"><div></div><div class="lanes-axis">' + ticks.join("") + "</div></div>";
 
     elLegend.innerHTML =
       '<span><i class="free"></i>Vapaa</span><span><i class="booked"></i>Varattu</span>' +

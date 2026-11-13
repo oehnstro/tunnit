@@ -344,55 +344,6 @@ main.lanes {
   text-overflow: ellipsis;
 }
 
-.lanes-caption {
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--label-text);
-}
-
-.lanes-ylab {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-self: stretch;
-  font-size: 0.65rem;
-  color: var(--label-text);
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-.lanes-chart {
-  position: relative;
-  height: 84px;
-  border-bottom: 1px solid var(--border);
-}
-
-.lanes-chart svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.lanes-grid line {
-  stroke: var(--border);
-  stroke-width: 1;
-}
-
-.lanes-chart-shut {
-  fill: var(--border);
-  opacity: 0.5;
-}
-
-.lanes-area {
-  fill: var(--open-bg);
-  stroke: var(--open);
-  stroke-width: 1.5;
-  stroke-linejoin: round;
-}
-
 .lanes-track {
   position: relative;
   height: 1.75rem;
@@ -452,9 +403,14 @@ main.lanes {
   pointer-events: none;
 }
 
+.lanes-nowrow {
+  position: relative;
+  height: 0.9rem;
+}
+
 .lanes-now-tag {
   position: absolute;
-  top: 0;
+  bottom: 0;
   transform: translateX(-50%);
   background: var(--surface);
   color: var(--today);
