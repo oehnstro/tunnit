@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, copyFileSync, mkdirSync, existsSync, rmSync } from "fs";
+import { readFileSync, writeFileSync, copyFileSync, mkdirSync, existsSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -59,7 +59,7 @@ function hasSpecialHoursToday(place: PlaceData): boolean {
   return place.specialDays.some((d) => d.date === today);
 }
 
-function renderPlace(place: PlaceData, index: number, lanesPage: boolean): string {
+function renderPlace(place: PlaceData, index: number): string {
   const icon = CATEGORY_ICONS[place.category] ?? "";
   const specialToday = hasSpecialHoursToday(place);
 
@@ -95,7 +95,7 @@ function renderPlace(place: PlaceData, index: number, lanesPage: boolean): strin
       </div>
       ${specialNotice}
       <div class="hours-grid">${hoursRows}</div>
-      ${lanesPage && place.category === "swimming" ? `<a class="card-link" href="uimahalli.html">Radat &rarr;</a>` : ""}
+      ${place.category === "swimming" ? `<a class="card-link" href="uimahalli.html">Radat &rarr;</a>` : ""}
     </div>`;
 }
 
@@ -135,14 +135,14 @@ function pageShell(opts: {
 </html>`;
 }
 
-function generateHtml(places: PlaceData[], lanesPage: boolean): string {
+function generateHtml(places: PlaceData[]): string {
   const fetchedAt = places[0]?.fetchedAt
     ? new Date(places[0].fetchedAt).toLocaleDateString("fi-FI", {
         dateStyle: "medium",
       })
     : "unknown";
 
-  const cards = places.map((p, i) => renderPlace(p, i, lanesPage)).join("\n");
+  const cards = places.map((p, i) => renderPlace(p, i)).join("\n");
 
   return pageShell({
     title: "Tunnit &mdash; Kirkkonummi",
@@ -215,13 +215,16 @@ function poolHours(pool: PlaceData | undefined): Record<string, [number, number]
   return hours;
 }
 
-function generateLanesHtml(lanes: LanesData, pool: PlaceData | undefined): string {
-  const updated = new Date(lanes.fetchedAt).toLocaleString("fi-FI", {
-    timeZone: "Europe/Helsinki",
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-  const data = JSON.stringify({ fetchedAt: lanes.fetchedAt, hours: poolHours(pool), bookings: lanes.bookings })
+// lanes is null when the Timmi fetch failed: the page still exists and says there is no data.
+function generateLanesHtml(lanes: LanesData | null, pool: PlaceData | undefined): string {
+  const updated = lanes
+    ? new Date(lanes.fetchedAt).toLocaleString("fi-FI", {
+        timeZone: "Europe/Helsinki",
+        dateStyle: "medium",
+        timeStyle: "short",
+      })
+    : null;
+  const data = JSON.stringify({ fetchedAt: lanes?.fetchedAt ?? null, hours: poolHours(pool), bookings: lanes?.bookings ?? [] })
     .replace(/</g, "\\u003c");
 
   return pageShell({
@@ -238,7 +241,9 @@ function generateLanesHtml(lanes: LanesData, pool: PlaceData | undefined): strin
     <div class="lanes-detail" id="lanes-detail" aria-live="polite"></div>
     <div class="lanes-legend" id="lanes-legend"></div>
   </main>`,
-    footer: `P&auml;ivitetty ${updated} &middot; L&auml;hde: Timmi-varauskalenteri`,
+    footer: updated
+      ? `P&auml;ivitetty ${updated} &middot; L&auml;hde: Timmi-varauskalenteri`
+      : `Varaustietojen haku ep&auml;onnistui &middot; L&auml;hde: Timmi-varauskalenteri`,
     scripts: `<script type="application/json" id="lanes-data">${data}</script>
   <script src="lanes.js"></script>`,
   });
@@ -257,7 +262,7 @@ function main() {
     ? JSON.parse(readFileSync(lanesPath, "utf-8"))
     : null;
 
-  const html = generateHtml(data, lanes !== null);
+  const html = generateHtml(data);
   writeFileSync(resolve(distDir, "index.html"), html);
 
   copyFileSync(
@@ -265,14 +270,9 @@ function main() {
     resolve(distDir, "style.css")
   );
 
-  if (lanes) {
-    const pool = data.find((p) => p.category === "swimming");
-    writeFileSync(resolve(distDir, "uimahalli.html"), generateLanesHtml(lanes, pool));
-    copyFileSync(resolve(__dirname, "../public/lanes.js"), resolve(distDir, "lanes.js"));
-  } else {
-    rmSync(resolve(distDir, "uimahalli.html"), { force: true });
-    rmSync(resolve(distDir, "lanes.js"), { force: true });
-  }
+  const pool = data.find((p) => p.category === "swimming");
+  writeFileSync(resolve(distDir, "uimahalli.html"), generateLanesHtml(lanes, pool));
+  copyFileSync(resolve(__dirname, "../public/lanes.js"), resolve(distDir, "lanes.js"));
 
   const cnamePath = resolve(__dirname, "../public/CNAME");
   if (existsSync(cnamePath)) {
@@ -281,7 +281,7 @@ function main() {
 
   console.log(
     `Generated dist/index.html with ${data.length} places` +
-      (lanes ? ` and dist/uimahalli.html with ${lanes.bookings.length} lane bookings` : " (no lane data, lanes page skipped)")
+      (lanes ? ` and dist/uimahalli.html with ${lanes.bookings.length} lane bookings` : " and dist/uimahalli.html (no lane data)")
   );
 }
 

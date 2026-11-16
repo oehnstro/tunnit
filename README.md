@@ -64,7 +64,7 @@ Open `dist/index.html` in a browser to preview.
 - Bookings come from the swimming hall's public Timmi booking calendar (asp3.timmi.fi), through its read-only guest login. No API key is needed.
 - `npm run fetch:lanes` fetches two weeks of bookings to `dist/lanes.json`. `npm run build` runs it between the Google fetch and the page generation.
 - Opening hours, including holiday exceptions, come from the Uimahalli entry in the Google data. Swimming ends 30 minutes before the hall closes.
-- If the Timmi fetch fails, the build still succeeds. That day's site just has no lanes page and no link to it.
+- If the Timmi fetch fails, the build still succeeds. The lanes page and its link stay, and the page says that booking data isn't available.
 - The Timmi calls are an undocumented internal API, so a Timmi update can break them. `src/timmi.ts` has the room-part IDs and the call sequence.
 
 ## Production (GitHub Pages)

@@ -129,7 +129,9 @@ async function main() {
   } catch (err) {
     // Don't leave a stale file from an earlier local run behind.
     rmSync(out, { force: true });
-    console.error("  FAIL: Timmi:", err instanceof Error ? err.message : err);
+    // fetch() reports network errors as "fetch failed" with the real reason in .cause.
+    const cause = err instanceof Error && err.cause instanceof Error ? ` (${err.cause.message})` : "";
+    console.error("  FAIL: Timmi:", err instanceof Error ? err.message + cause : err);
   }
 }
 
